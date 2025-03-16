@@ -74,22 +74,23 @@ export const validationSchema = yup.object({
 
   profileImage: yup
     .mixed<File | string>()
-    .nullable()
-    .transform(value => {
-      if (value === '') return null;
-      return value;
+    .required('Profile image is required')
+    .test('is-not-empty', 'Profile image is required', function (value) {
+      // Reject empty strings
+      if (value === '' || value === null || value === undefined) return false;
+      return true;
     })
     .test('is-valid-type', 'File must be JPEG or PNG', function (value) {
-      if (value === null || value === undefined) return true;
-      if (typeof value === 'string') return true;
+      if (value === null || value === undefined || value === '') return false;
+      if (typeof value === 'string' && value.startsWith('data:image/')) return true;
       if (value instanceof File) {
         return ['image/jpeg', 'image/png'].includes(value.type);
       }
       return false;
     })
     .test('is-valid-size', 'File size must be less than 5MB', function (value) {
-      if (value === null || value === undefined) return true;
-      if (typeof value === 'string') return true;
+      if (value === null || value === undefined || value === '') return false;
+      if (typeof value === 'string' && value.startsWith('data:image/')) return true;
       if (value instanceof File) {
         return value.size <= 5 * 1024 * 1024;
       }

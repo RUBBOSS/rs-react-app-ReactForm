@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { RootState } from '../store';
 import { clearLatestEntry } from '../store/formDataSlice';
 
@@ -21,14 +21,28 @@ const HomePage = () => {
   const { entries, latestEntryId } = useSelector(
     (state: RootState) => state.formData as { entries: FormEntry[]; latestEntryId: string | null }
   );
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+
+  const sortedEntries = useMemo(() => {
+    return [...entries].sort((a, b) => b.timestamp - a.timestamp);
+  }, [entries]);
 
   useEffect(() => {
     if (latestEntryId) {
+      setHighlightedId(latestEntryId);
+
       const timer = setTimeout(() => {
         dispatch(clearLatestEntry());
       }, 5000);
 
-      return () => clearTimeout(timer);
+      const highlightTimer = setTimeout(() => {
+        setHighlightedId(null);
+      }, 5000);
+
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(highlightTimer);
+      };
     }
   }, [latestEntryId, dispatch]);
 
@@ -64,54 +78,55 @@ const HomePage = () => {
         </div>
       </div>
 
-      {entries.length > 0 && (
+      {sortedEntries.length > 0 && (
         <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-center">Submitted Forms</h2>
+          <h2 className="text-[35px] font-bold mb-6 text-center">Submitted Forms</h2>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {entries.map(entry => {
-              const isLatest = entry.id === latestEntryId;
+            {sortedEntries.map(entry => {
+              const isHighlighted = entry.id === highlightedId;
 
               return (
                 <div
                   key={entry.id}
-                  className={`bg-white rounded-lg shadow p-6 ${
-                    isLatest ? 'ring-4 ring-blue-400 animate-pulse' : ''
-                  } transition-all`}
+                  className={`bg-white rounded-lg shadow p-6 transition-all duration-300
+                    ${isHighlighted ? 'ring-4 ring-blue-400 animate-pulse bg-blue-50' : ''}
+                  `}
                 >
                   <div
-                    className={`text-sm font-medium mb-4 ${
+                    className={`text-[30px] font-bold mb-4 text-center ${
                       entry.source === 'hookForm' ? 'text-green-600' : 'text-blue-600'
                     }`}
                   >
                     {entry.source === 'hookForm' ? 'React Hook Form' : 'Uncontrolled Form'}
+                    {isHighlighted && (
+                      <span className="ml-2 text-blue-500 animate-pulse">★ New</span>
+                    )}
                   </div>
 
-                  <div className="flex flex-col space-y-4">
-                    <div className="flex items-center">
-                      {entry.profileImage && (
-                        <img
-                          src={entry.profileImage}
-                          alt={entry.name}
-                          className="w-12 h-12 rounded-full mr-4 object-cover border-2 border-gray-200"
-                        />
-                      )}
-                      <div>
-                        <h3 className="font-bold text-lg">{entry.name}</h3>
-                        <p className="text-gray-500 text-sm">
-                          {entry.age} years old • {entry.gender}
-                        </p>
-                      </div>
+                  <div className="flex flex-col items-center space-y-4">
+                    {entry.profileImage && (
+                      <img
+                        src={entry.profileImage}
+                        alt={entry.name}
+                        className="w-[100px] h-[100px] rounded-full object-cover border-2 border-gray-200"
+                      />
+                    )}
+                    <div className="text-center">
+                      <h3 className="font-bold text-[25px]">{entry.name}</h3>
+                      <p className="text-[25px]">
+                        {entry.age} years old • {entry.gender}
+                      </p>
                     </div>
 
-                    <div className="flex flex-col text-sm">
-                      <p className="text-gray-700">
+                    <div className="flex flex-col text-[25px] w-full pt-3">
+                      <p className="text-center">
                         <span className="font-medium">Email:</span> {entry.email}
                       </p>
-                      <p className="text-gray-700">
+                      <p className="text-center">
                         <span className="font-medium">Country:</span> {entry.country}
                       </p>
-                      <p className="text-gray-500 text-xs mt-2">
+                      <p className="text-[25px] mt-2 text-center">
                         Submitted {new Date(entry.timestamp).toLocaleString()}
                       </p>
                     </div>

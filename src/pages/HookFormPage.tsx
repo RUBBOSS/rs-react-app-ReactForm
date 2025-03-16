@@ -18,7 +18,7 @@ interface FormInputs {
   gender: string;
   termsAccepted: boolean;
   country: string;
-  profileImage?: string | File | null;
+  profileImage: string | File;
 }
 
 const HookFormPage = () => {
@@ -37,7 +37,7 @@ const HookFormPage = () => {
     resolver: yupResolver(validationSchema),
     mode: 'onChange',
     defaultValues: {
-      profileImage: null,
+      profileImage: '',
     },
   });
 
@@ -63,7 +63,7 @@ const HookFormPage = () => {
     const file = e.target.files?.[0];
     if (!file) {
       setPreviewImage(null);
-      setValue('profileImage', null);
+      setValue('profileImage', '');
       return;
     }
 
@@ -82,7 +82,22 @@ const HookFormPage = () => {
     trigger('country');
   };
 
-  const onSubmit = (data: FormInputs) => {
+  const onSubmit = async (data: FormInputs) => {
+    let profileImageData = null;
+    if (data.profileImage) {
+      if (data.profileImage instanceof File) {
+        // Convert file to base64 if it hasn't been converted yet
+        try {
+          profileImageData = await fileToBase64(data.profileImage);
+        } catch (error) {
+          console.error('Error converting profile image:', error);
+        }
+      } else if (typeof data.profileImage === 'string' && data.profileImage.startsWith('data:')) {
+        // If it's already a data URL, use it directly
+        profileImageData = data.profileImage;
+      }
+    }
+
     return new Promise<void>(resolve => {
       setTimeout(() => {
         dispatch(
@@ -91,7 +106,7 @@ const HookFormPage = () => {
             ...data,
             source: 'hookForm',
             timestamp: Date.now(),
-            profileImage: typeof data.profileImage === 'string' ? data.profileImage : null,
+            profileImage: profileImageData,
           })
         );
 
@@ -107,7 +122,7 @@ const HookFormPage = () => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">React Hook Form Example</h1>
+        <h1 className="text-[40px] font-bold mb-4">React Hook Form Example</h1>
         <p className="font-bold text-[35px]">
           This form uses React Hook Form for live validation and efficient form handling.
         </p>
@@ -124,10 +139,21 @@ const HookFormPage = () => {
               {...register('name')}
               type="text"
               id="hook-name"
-              className={`w-full p-2 border rounded ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.name ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.name ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="Your name"
             />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+            {errors.name && (
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.name.message}
+              </p>
+            )}
           </div>
 
           {/* Age Field */}
@@ -139,11 +165,22 @@ const HookFormPage = () => {
               {...register('age')}
               type="number"
               id="hook-age"
-              className={`w-full p-2 border rounded ${errors.age ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.age ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.age ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="Your age"
               min="0"
             />
-            {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age.message}</p>}
+            {errors.age && (
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.age.message}
+              </p>
+            )}
           </div>
 
           {/* Email Field */}
@@ -155,10 +192,21 @@ const HookFormPage = () => {
               {...register('email')}
               type="email"
               id="hook-email"
-              className={`w-full p-2 border rounded ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.email ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.email ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="you@example.com"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+            {errors.email && (
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* Password Field */}
@@ -170,27 +218,39 @@ const HookFormPage = () => {
               {...register('password')}
               type="password"
               id="hook-password"
-              className={`w-full p-2 border rounded ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.password ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.password ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="Your password"
             />
             {passwordStrength && (
-              <div className="mt-1">
-                <span className="text-sm">Strength: </span>
+              <div className="mt-3">
+                <span style={{ fontSize: '20px', fontWeight: 'bold' }}>Strength: </span>
                 <span
-                  className={`text-sm font-medium ${
-                    passwordStrength === 'Strong'
-                      ? 'text-green-500'
-                      : passwordStrength === 'Medium'
-                        ? 'text-yellow-500'
-                        : 'text-red-500'
-                  }`}
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    color:
+                      passwordStrength === 'Strong'
+                        ? '#10B981'
+                        : passwordStrength === 'Medium'
+                          ? '#F59E0B'
+                          : '#EF4444',
+                  }}
                 >
                   {passwordStrength}
                 </span>
               </div>
             )}
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.password.message}
+              </p>
             )}
           </div>
 
@@ -203,18 +263,36 @@ const HookFormPage = () => {
               {...register('confirmPassword')}
               type="password"
               id="hook-confirmPassword"
-              className={`w-full p-2 border rounded ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.confirmPassword ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.confirmPassword ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="Confirm your password"
             />
             {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
 
           {/* Gender Field */}
           <div>
             <span className="block font-bold text-[35px] mb-1">Gender</span>
-            <div className="flex space-x-4">
+            <div
+              style={{
+                borderColor: errors.gender ? '#EF4444' : 'transparent',
+                borderWidth: errors.gender ? '2px' : '0',
+                borderStyle: 'solid',
+                borderRadius: '8px',
+                padding: errors.gender ? '8px' : '0',
+              }}
+              className="flex space-x-4"
+            >
               <div className="flex items-center">
                 <input
                   {...register('gender')}
@@ -223,7 +301,9 @@ const HookFormPage = () => {
                   value="male"
                   className="mr-2"
                 />
-                <label htmlFor="hook-male">Male</label>
+                <label className="text-[35px] font-bold" htmlFor="hook-male">
+                  Male
+                </label>
               </div>
               <div className="flex items-center">
                 <input
@@ -233,20 +313,19 @@ const HookFormPage = () => {
                   value="female"
                   className="mr-2"
                 />
-                <label htmlFor="hook-female">Female</label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  {...register('gender')}
-                  type="radio"
-                  id="hook-other"
-                  value="other"
-                  className="mr-2"
-                />
-                <label htmlFor="hook-other">Other</label>
+                <label className="text-[35px] font-bold" htmlFor="hook-female">
+                  Female
+                </label>
               </div>
             </div>
-            {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>}
+            {errors.gender && (
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.gender.message}
+              </p>
+            )}
           </div>
 
           {/* Country Autocomplete */}
@@ -272,10 +351,19 @@ const HookFormPage = () => {
               id="hook-profileImage"
               accept="image/png,image/jpeg"
               onChange={handleFileChange}
-              className="w-full p-2 border rounded border-gray-300"
+              style={{
+                borderColor: errors.profileImage ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.profileImage ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px] bg-white"
             />
             {errors.profileImage && (
-              <p className="text-red-500 text-sm mt-1">{errors.profileImage.message}</p>
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.profileImage.message}
+              </p>
             )}
 
             {previewImage && (
@@ -292,14 +380,23 @@ const HookFormPage = () => {
                 {...register('termsAccepted')}
                 type="checkbox"
                 id="hook-terms"
-                className={`mr-2 ${errors.termsAccepted ? 'border-red-500' : ''}`}
+                style={{
+                  borderColor: errors.termsAccepted ? '#EF4444' : '',
+                  boxShadow: errors.termsAccepted ? '0 0 0 2px rgba(239, 68, 68, 0.5)' : 'none',
+                }}
+                className="mr-2"
               />
-              <label htmlFor="hook-terms" className="text-sm">
+              <label htmlFor="hook-terms" className="text-[30px] font-bold">
                 I accept the Terms and Conditions
               </label>
             </div>
             {errors.termsAccepted && (
-              <p className="text-red-500 text-sm mt-1">{errors.termsAccepted.message}</p>
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.termsAccepted.message}
+              </p>
             )}
           </div>
 
@@ -308,7 +405,7 @@ const HookFormPage = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full p-3 rounded text-white font-medium
+              className={`w-full py-5 px-4 rounded-[8px] text-white font-medium text-xl transition-colors min-h-[30px]
                 ${isSubmitting ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
             >
               {isSubmitting ? 'Submitting...' : 'Submit'}

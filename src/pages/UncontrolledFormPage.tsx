@@ -155,10 +155,21 @@ const UncontrolledFormPage = () => {
               ref={nameRef}
               type="text"
               id="name"
-              className={`w-full p-2 border rounded ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.name ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.name ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="Your name"
             />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+            {errors.name && (
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.name}
+              </p>
+            )}
           </div>
 
           {/* Age Field */}
@@ -170,11 +181,22 @@ const UncontrolledFormPage = () => {
               ref={ageRef}
               type="number"
               id="age"
-              className={`w-full p-2 border rounded ${errors.age ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.age ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.age ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="Your age"
               min="0"
             />
-            {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
+            {errors.age && (
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.age}
+              </p>
+            )}
           </div>
 
           {/* Email Field */}
@@ -186,10 +208,21 @@ const UncontrolledFormPage = () => {
               ref={emailRef}
               type="email"
               id="email"
-              className={`w-full p-2 border rounded ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.email ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.email ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="you@example.com"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.email}
+              </p>
+            )}
           </div>
 
           {/* Password Field */}
@@ -201,27 +234,41 @@ const UncontrolledFormPage = () => {
               ref={passwordRef}
               type="password"
               id="password"
-              className={`w-full p-2 border rounded ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.password ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.password ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="Your password"
               onChange={handlePasswordChange}
             />
             {passwordStrength && (
-              <div className="mt-1">
-                <span className="text-sm">Strength: </span>
+              <div className="mt-3">
+                <span style={{ fontSize: '20px', fontWeight: 'bold' }}>Strength: </span>
                 <span
-                  className={`text-sm font-medium ${
-                    passwordStrength === 'Strong'
-                      ? 'text-green-500'
-                      : passwordStrength === 'Medium'
-                        ? 'text-yellow-500'
-                        : 'text-red-500'
-                  }`}
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    color:
+                      passwordStrength === 'Strong'
+                        ? '#10B981'
+                        : passwordStrength === 'Medium'
+                          ? '#F59E0B'
+                          : '#EF4444',
+                  }}
                 >
                   {passwordStrength}
                 </span>
               </div>
             )}
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            {errors.password && (
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.password}
+              </p>
+            )}
           </div>
 
           {/* Confirm Password Field */}
@@ -233,18 +280,36 @@ const UncontrolledFormPage = () => {
               ref={confirmPasswordRef}
               type="password"
               id="confirmPassword"
-              className={`w-full p-2 border rounded ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+              style={{
+                borderColor: errors.confirmPassword ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.confirmPassword ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px]"
               placeholder="Confirm your password"
             />
             {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.confirmPassword}
+              </p>
             )}
           </div>
 
           {/* Gender Field */}
           <div>
             <span className="block font-bold text-[35px] mb-1">Gender</span>
-            <div className="flex space-x-4">
+            <div
+              style={{
+                borderColor: errors.gender ? '#EF4444' : 'transparent',
+                borderWidth: errors.gender ? '2px' : '0',
+                borderStyle: 'solid',
+                borderRadius: '8px',
+                padding: errors.gender ? '8px' : '0',
+              }}
+              className="flex space-x-4"
+            >
               <div className="flex items-center">
                 <input
                   ref={maleRef}
@@ -254,7 +319,9 @@ const UncontrolledFormPage = () => {
                   value="male"
                   className="mr-2"
                 />
-                <label htmlFor="male">Male</label>
+                <label className="text-[30px]" htmlFor="male">
+                  Male
+                </label>
               </div>
               <div className="flex items-center">
                 <input
@@ -265,21 +332,19 @@ const UncontrolledFormPage = () => {
                   value="female"
                   className="mr-2"
                 />
-                <label htmlFor="female">Female</label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  ref={otherRef}
-                  type="radio"
-                  id="other"
-                  name="gender"
-                  value="other"
-                  className="mr-2"
-                />
-                <label htmlFor="other">Other</label>
+                <label className="text-[30px]" htmlFor="female">
+                  Female
+                </label>
               </div>
             </div>
-            {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+            {errors.gender && (
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.gender}
+              </p>
+            )}
           </div>
 
           {/* Country Autocomplete */}
@@ -306,10 +371,19 @@ const UncontrolledFormPage = () => {
               id="profileImage"
               accept="image/png,image/jpeg"
               onChange={handleFileChange}
-              className="w-full p-2 border rounded border-gray-300"
+              style={{
+                borderColor: errors.profileImage ? '#EF4444' : '#D1D5DB',
+                boxShadow: errors.profileImage ? '0 0 0 2px rgba(239, 68, 68, 0.25)' : 'none',
+              }}
+              className="w-full py-5 px-4 border text-lg transition-all outline-none rounded-[8px] min-h-[30px] bg-white"
             />
             {errors.profileImage && (
-              <p className="text-red-500 text-sm mt-1">{errors.profileImage}</p>
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.profileImage}
+              </p>
             )}
 
             {previewImage && (
@@ -326,14 +400,23 @@ const UncontrolledFormPage = () => {
                 ref={termsRef}
                 type="checkbox"
                 id="terms"
-                className={`mr-2 ${errors.termsAccepted ? 'border-red-500' : ''}`}
+                style={{
+                  borderColor: errors.termsAccepted ? '#EF4444' : '',
+                  boxShadow: errors.termsAccepted ? '0 0 0 2px rgba(239, 68, 68, 0.5)' : 'none',
+                }}
+                className="mr-2"
               />
-              <label htmlFor="terms" className="text-sm">
+              <label htmlFor="terms" className="text-[30px] font-bold">
                 I accept the Terms and Conditions
               </label>
             </div>
             {errors.termsAccepted && (
-              <p className="text-red-500 text-sm mt-1">{errors.termsAccepted}</p>
+              <p
+                style={{ color: '#EF4444', fontSize: '30px', fontWeight: 'bold' }}
+                className="mt-1"
+              >
+                {errors.termsAccepted}
+              </p>
             )}
           </div>
 
@@ -341,7 +424,8 @@ const UncontrolledFormPage = () => {
           <div>
             <button
               type="submit"
-              className="w-full p-3 rounded text-white font-medium bg-blue-600 hover:bg-blue-700"
+              disabled={isSubmitting}
+              className="w-full py-5 px-4 rounded-[8px] text-white font-medium text-xl transition-colors bg-blue-600 hover:bg-blue-700 min-h-[30px]"
             >
               {isSubmitting ? 'Submitting...' : 'Submit'}
             </button>
